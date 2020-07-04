@@ -46,16 +46,16 @@
           <transition name="loginAreaMove">
             <div :class="switchClass" v-if="show">
               <div class="logo">PYCHAT</div>
-              <div class="inputArea">
-                <form action="#" method="post">
-                  <input type="text" name="Userame" placeholder="用户名" required="" />
-                  <input type="password" name="Password" placeholder="密码" required="" />
-                </form>
+              <form action="#" method="post">
+                <div class="inputArea">                
+                  <input type="text" name="Username3" placeholder="用户名" required="" />
+                  <input type="password" name="Password3" placeholder="密码" required="" />
+                
                 <div class="send-button">
-                  <form>
+                  
                     <input type="submit" value="登 录" @click.prevent="pass">
-                  </form>
-                </div>
+                  
+                </div></form>
                 <div class="jumpArea">
                   <div class="switchToReg" @click="changeShow">
                     <div class="text">注册</div>
@@ -69,17 +69,16 @@
           <transition name="registerAreaMove">
             <div class="moveArea" v-if="!show">
               <div class="logo">PYCHAT</div>
-              <div class="inputArea">
-                <form action="#" method="post">
-                  <input type="text" name="Userame" placeholder="用户名" required="">
-                  <input type="password" name="Password" placeholder="密码" required="">
-                  <input type="password" name="Password" placeholder="确认密码" required="">
-                </form>
-                <div class="send-button">
-                  <form>
+              <form action="#" method="post">
+                <div class="inputArea">                
+                  <input type="text" name="Username" placeholder="用户名" required="">
+                  <input type="password" name="Password1" placeholder="密码" required="">
+                  <input type="password" name="Password2" placeholder="确认密码" required="">
+                  <div class="send-button">
+                  
                     <input type="submit" value="注 册">
-                  </form>
-                </div>
+                 
+                </div> </form>
                 <div class="jumpArea">
                   <div class="switchToReg" @click="changeShow">
                     <div class="text">登录</div>
