@@ -17,6 +17,9 @@ def home(request):
             user = auth.authenticate(username=user_name3, password=password3)
             if user is None:
                 return render(request, 'index.html', {'错误': '用户名或密码错误'})
+            else:
+                auth.login(request, user)
+                return render(request, 'index.html')
         else:
             try:
                 User.objects.get(username=user_name)
