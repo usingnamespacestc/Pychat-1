@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+{% load static %}
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="{% static 'index.css' %}" type="text/css" media="all">
+    <!--引入Vue组件-->
+		<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <!-- 引入ElementUI样式 -->
+    <link rel="stylesheet" href="{% static 'https://unpkg.com/element-ui/lib/theme-chalk/index.css' %}">
+    <!-- 引入ElementUI组件库 -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <!--
+		<script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css"/>
+		<script src="https://cdn.jsdelivr.net/gh/stevenjoezhang/live2d-widget/autoload.js"></script>
+		-->
+    <title>PyChat</title>
+  </head>
+  <body>
+    <div id="container">  <!--Vue挂载点-->
+      <transition name="mainAreaMove">
+        <div :class="mainArea" v-if="isPassed">
+          <!--
+          <div class="leftFixedBtn">
+            好友列表
+          </div>
+          <div class="friendList">
+          </div>
+          -->
+          <div class="talkArea">
+            <div class="contentShowArea">
+              <embed src="test/test.html" width=100% height=100%>
+            </div>
+            <div class="contentInputArea">  
+              <textarea>🌶4️⃣📌💉🐂🍺​🌶4️⃣📌💉🐂🍺🌶4️⃣📌💉🐂🍺 ​</textarea>
+            </div>
+            <div class="btnArea">
+              <input type="button" value="发送" />
+            </div>
+          </div>
+        </div>
+      </transition>
+      <transition name="indexAreaMove">
+        <div class="indexArea" v-if="!isPassed">
+          <transition name="loginAreaMove">
+            <div :class="switchClass" v-if="show">
+              <div class="logo">PYCHAT</div>
+              <div class="inputArea">
+                <form action="#" method="post">
+                  <input type="text" name="Userame" placeholder="用户名" required="" />
+                  <input type="password" name="Password" placeholder="密码" required="" />
+                </form>
+                <div class="send-button">
+                  <form>
+                    <input type="submit" value="登 录" @click.prevent="pass">
+                  </form>
+                </div>
+                <div class="jumpArea">
+                  <div class="switchToReg" @click="changeShow">
+                    <div class="text">注册</div>
+                    <img class="downArrow" src="{% static 'arrow.png' %}" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </transition>
+          <!--以下部分是注册区域-->
+          <transition name="registerAreaMove">
+            <div class="moveArea" v-if="!show">
+              <div class="logo">PYCHAT</div>
+              <div class="inputArea">
+                <form action="#" method="post">
+                  <input type="text" name="Userame" placeholder="用户名" required="">
+                  <input type="password" name="Password" placeholder="密码" required="">
+                  <input type="password" name="Password" placeholder="确认密码" required="">
+                </form>
+                <div class="send-button">
+                  <form>
+                    <input type="submit" value="注 册">
+                  </form>
+                </div>
+                <div class="jumpArea">
+                  <div class="switchToReg" @click="changeShow">
+                    <div class="text">登录</div>
+                    <img class="downArrow" src="{% static 'arrow.png' %}" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </transition>
+        </div>
+      </transition>
+      <div class="settingArea">
+        <img src="{% static 'setting.png' %}" class="settingBtn" @click="drawer = true" />
+      </div>
+      <el-drawer
+        title="设置页面"
+        :visible.sync="drawer"
+        :with-header="false">
+        <div class="settingDrawer">
+          <!--
+          <el-button type="primary" round @click="changeBk">
+            临时更换背景
+          </el-button>
+          -->
+          <div class="profile">
+            <div class="icon">
+              <el-avatar :size="60" src="https://empty" @error="errorHandler">
+                <img src="/icon/stc.jpg"/>
+              </el-avatar>
+            </div>
+          </div>
+          <div class="facade">
+
+          </div>
+        </div>
+        <!--
+        <div class="settingDrawerBtn">更 换 背 景</div>
+        <div class="settingDrawerBtn" @click="chuo">猛戳谢唯皮燕</div>
+        <div class="tmpImgArea">
+          <img src="xw.jpg" :style="{height: 16 * h + 'px', width: 10 * h + 'px'}">
+        </div>
+        -->
+      </el-drawer>
+    </div>
+  </body>
+  <script src="{% static 'index.js' %}"></script>
+</html>

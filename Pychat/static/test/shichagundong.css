@@ -1,0 +1,39 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    padding: 0
+}
+
+.box {
+    height: 100%;
+    position: relative;
+    z-index: 1;
+}
+
+.flowImage {
+    position: relative;
+    height: 100%;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    z-index: 1;
+   background-attachment: fixed;
+}
+
+.flowImage>p {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 10%;
+    color: #fff;
+    font-size: 30px;
+    transform: translate(-10%, -50%);
+}
+
+.bg1 {
+    background-image: url(https://api.uomg.com/api/rand.img2?sort=二次元&format=images);
+}
+
+.bg2:nth-child(2) {
+    background-image: url(https://cdn.ipayy.net/img/api.php);
+}

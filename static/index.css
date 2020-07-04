@@ -1,0 +1,491 @@
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  height: 100%;
+  animation: beginning 1s;
+}
+
+body {
+  /*一个随机获取动漫图片的api↓*/
+  /*background: url("https://api.mz-moe.cn/img.php");*/
+  /*这个接口很严肃↓*/
+  /*background: url("https://uploadbeta.com/api/pictures/random/?key=BingEverydayWallpaperPicture");*/
+  /*默认背景图片↓*/
+  background: url("background_default.jpg");
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center;
+  background-size: cover;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  overflow-y: hidden;
+  overflow-x: hidden;
+}
+
+#container {
+	width: 100%;
+  height: 100%;
+}
+
+.indexArea {
+  width: 100%;
+  height: 100%;
+}
+
+.moveArea {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'Roboto', sans-serif;
+  text-align: center;
+}
+
+.moveAreaHidden {
+  opacity: 0;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'Roboto', sans-serif;
+  text-align: center;
+}
+
+.logo {
+  /*border: 1px solid red;*/
+  display: flex;
+  flex-direction: column-reverse;
+  flex-grow: 1;
+  font-family: "微软雅黑";
+  font-weight: bold;
+  font-size: 70px;
+  color: rgba(252, 252, 252, 0.95);
+  margin: 2%;
+  letter-spacing: -5px;
+  /*logo不可选*/
+  -moz-user-select: none;
+  -o-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  /*标题文字的阴影效果↓*/
+  text-shadow: 5px 2px 6px #000;
+}
+
+
+.inputArea {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 2;
+  width: 27%;
+  min-width: 450px;
+  padding-top: 5%;
+  background-color:  rgba(100, 100, 100, 0.5);
+  /*background-color:  rgba(238, 238, 238, 0.3);*/
+  -moz-box-shadow: rgba(0, 0, 0, 0.3) 0px 0px 40px;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0px 0px 40px;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 0px 40px;
+  border-radius: 20px 20px 0 0;
+}
+
+.inputArea input[type="text"], input[type="password"] {
+  padding-left: 15px;
+  padding-bottom: 5px;
+  width: 80%;
+  margin-bottom: 40px;
+  background-color: transparent;
+  border: none;
+  font-size: 15px;
+  border-left: 6px solid rgb(250, 210, 176);
+  border-bottom: 2px solid #FFF;
+  outline: none;
+  color: #FFF;
+}
+
+input::-webkit-input-placeholder{
+  color: rgba(252, 252, 252, 0.8);
+}
+input::-moz-placeholder{   /* Mozilla Firefox 19+ */
+  color: rgba(252, 252, 252, 0.8);
+}
+input:-moz-placeholder{  /* Mozilla Firefox 4 to 18 */
+  color: rgba(252, 252, 252, 0.8);
+}
+input:-ms-input-placeholder{  /* Internet Explorer 10-11 */ 
+  color: rgba(252, 252, 252, 0.8);
+}
+
+.send-button {
+  height: 50px;
+}
+
+.send-button input[type="submit"] {
+  width: 85%;
+  padding: 10px 0;
+  font-size: 20px;
+  background-color: transparent;
+  color: #FFF;
+  border: 1.5px solid #FFF;
+  background-color: rgb(250, 210, 176);
+  border-radius: 25px;
+  cursor: pointer;
+  outline: none;
+  text-decoration: none;
+  /*开场动画*/
+  transition:0.5s all;
+  -webkit-transition:0.5s all;
+  -moz-transition:0.5s all;
+  -o-transition:0.5s all;
+  -ms-transition:0.5s all;
+  /*阴影*/
+  -moz-box-shadow: rgba(0, 0, 0, 0.3) 0px 5px 10px;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0px 5px 10px;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 5px 10px;
+}
+
+.send-button input[type="submit"]:hover {
+  animation: buttonHover 0.2s;
+  animation-fill-mode: forwards;
+}
+
+.jumpArea {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+}
+
+.switchToReg {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  cursor: pointer;
+  width: 60px;
+  height: 60px;
+}
+
+.switchToReg:hover {
+  animation: downArrowDown 0.25s;
+  animation-fill-mode: forwards;
+}
+
+.switchToReg .text {
+  color: rgb(246, 235, 235);
+  font-size: 16px;
+  font-weight: bold;
+  /*“注册”二字不可选*/
+  -moz-user-select: none;
+  -o-user-select:none;
+  -khtml-user-select:none;
+  -webkit-user-select:none;
+  -ms-user-select:none;
+  user-select:none;
+}
+
+.downArrow {
+  width: 40px;
+  height: 40px;
+}
+
+.settingArea {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  height: 6.6vh;
+  width: 6.6vh;
+  cursor: pointer;
+}
+
+.settingBtn {
+  height: 6.6vh;
+  width: 6.6vh;
+}
+
+.settingBtn:hover {
+  animation: gearRotate 2s;
+  animation-iteration-count: infinite;
+  animation-timing-function:2s;
+  -webkit-animation-timing-function:2s; /* Safari 和 Chrome */
+}
+
+.mainAreaMove-enter-active {
+  animation: mainAreaIn 0.65s;
+  animation-delay: 0.65s;
+}
+
+@keyframes mainAreaIn {
+  from {
+    margin-top: 100vh;
+    /* background-color: red; */
+  }
+  to {
+    margin-top: 0;
+    /* background-color: yellow; */
+  }
+}
+
+.indexAreaMove-leave-active {
+  animation: indexAreaOut 0.65s;
+}
+
+@keyframes indexAreaOut {
+  from {
+    margin-top: 0;
+  }
+  to {
+    margin-top: 100vh;
+  }
+}
+
+.loginAreaMove-enter-active {   /*登录上*/
+  animation: loginAreaIn 0.65s;
+  animation-delay: 0.65s;
+}
+
+.loginAreaMove-leave-active {
+  animation: loginAreaOut 0.65s;  /*登录下*/
+}
+
+.registerAreaMove-enter-active {  /*注册上*/
+  animation: registerAreaIn 0.65s;
+  animation-delay: 0.65s;
+}
+
+.registerAreaMove-leave-active {  /*注册下*/
+  animation: registerAreaOut 0.65s;
+}
+
+
+
+
+@keyframes gearRotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes beginning {
+  20% {
+    height: 0;
+  }
+  100% {
+    height: 100%;
+  }
+}
+
+@keyframes buttonHover {
+  from {
+
+  }
+  to {
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    border: 1.5px solid #FFFCE6;
+    margin-top: 2px;
+  }
+}
+
+@keyframes downArrowDown {
+  from {
+    
+  }
+  to {
+    margin: 3px;
+  }
+}
+
+/*登录上*/
+
+@keyframes loginAreaIn {   
+  from {
+    margin-top: 100vh;
+  }
+  to {
+    margin: 0;
+  }
+}
+
+
+/*登录下*/
+
+@keyframes loginAreaOut {  
+  from {
+    margin-top: 0;
+  }
+  to {
+    margin-top: 100vh;
+  }
+}
+
+ /*注册上*/
+
+@keyframes registerAreaIn { 
+  from {
+    margin-top: 100vh;
+  }
+  to {
+    margin-top: 0;
+  }
+}
+
+/*注册下*/
+
+@keyframes registerAreaOut {  
+  from {
+    margin-top: -100vh;
+  }
+  to {
+    margin-top: 0;
+  }
+}
+
+.mainArea {
+  width: 100%;
+  height: 100%;
+  background-color: rgba(245, 245, 245, 0);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mainAreaHidden {
+  opacity: 0;
+}
+
+.talkArea {
+  height: 70%;
+  width: 50%;
+  background-color: rgba(245, 245, 245, .90);
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  /* 加入一点阴影 */
+  -moz-box-shadow: rgba(0, 0, 0, 0.3) 0px 0px 40px;
+  -webkit-box-shadow: rgba(0, 0, 0, 0.3) 0px 0px 40px;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 0px 40px;
+
+}
+
+.contentShowArea {
+  width: 100%;
+  height: 65%;
+  background-color: transparent;
+  border-radius: 20px 20px 0 0;
+}
+
+.contentInputArea {
+  width: 100%;
+  height: 28%;
+  border-radius: 0 0 20px 20px;
+}
+
+.contentInputArea textarea {
+  width: 100%;
+  height: 100%;
+  padding: 15px;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  /* 去掉右下角 */
+  resize:none;  
+  font-size: 15px;
+  border-top: 5px solid rgb(250, 210, 176);
+  border-top-style: double;
+}
+
+.talkArea .btnArea {
+  width: 100%;
+  height: 7%;
+  border-radius: 0, 0, 20px, 20px;
+  /* border-top: 1px solid blue; */
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.talkArea .btnArea input[type="button"] {
+  height: 90%;
+  width: 15%;
+  background-color: red;
+  border-radius: 20px;
+  border: none;
+  outline: none;
+  margin-right: 3%;
+  margin-bottom: 3%;
+}
+
+.leftFixedBtn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 35px;
+  height: 100px;
+  background-color: red;
+  position: fixed;
+  left: 0;
+  top: 15vh;
+  writing-mode : tb-rl ;
+  border-radius: 0 20px 20px 0;
+  /*好友列表div中文字不可选*/
+  -moz-user-select: none;
+  -o-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: pointer;
+}
+
+.friendList {
+  width: 25vh;
+  height: 70vh;
+  background-color: blue;
+  position: fixed;
+  left: -25vh;
+}
+/*
+.settingDrawerBtn {
+  width: 100%;
+  height: 15vh;
+  background-color: red;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 40px;
+  font-weight: bold;
+  color: white;
+  margin-bottom: 1vh;
+}
+
+.settingDrawerBtn:hover {
+  background-color: blue;
+}
+
+
+.tmpImgArea {
+  width: 100%;
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+*/
+
+.el-drawer rtl {
+  opacity: 0.5;
+}
