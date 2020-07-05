@@ -77,11 +77,11 @@ WSGI_APPLICATION = 'Pychat.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'HOST': '127.0.0.1',
+        'HOST': '59.110.172.43',
         'PORT': 3306,
-        'NAME': 'user_data',
+        'NAME': 'PYCHAT',
         'USER': 'root',
-        'PASSWORD': '990712',
+        'PASSWORD': '14bcb7c5c1c7491b',
     }
 }
 
