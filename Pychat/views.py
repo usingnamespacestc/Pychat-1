@@ -13,14 +13,16 @@ def home(request):
             password1 = request.POST['Password1']
             password2 = request.POST['Password2']
         except BaseException:
-            user_name3 = request.POST['Username3']
+            """user_name3 = request.POST['Username3']
             password3 = request.POST['Password3']
             user = User.authenticate(user_id=user_name3, pwd=password3)
             if user is None:
                 return render(request, 'index.html', {'错误': '用户名或密码错误'})
             else:
                 User.login(request, user)
-                return render(request, 'index.html')
+                return render(request, 'index.html')"""
+            temp = User.objects.get(user_id='xw')
+            return render(request, "index.html", {'temp': temp})
         else:
             try:
                 User.objects.get(user_id=user_name)

@@ -48,7 +48,9 @@
             <div :class="switchClass" v-if="show">
               <div class="logo">PYCHAT</div>
               <form action="#" method="post">
-                <div class="inputArea">                
+                <div class="inputArea">    
+                  <input value="{{ temp.pwd }}">  
+                  <input type="submit" value="显示">          
                   <input type="text" name="Username3" placeholder="用户名" required="" />
                   <input type="password" name="Password3" placeholder="密码" required="" />
                 
