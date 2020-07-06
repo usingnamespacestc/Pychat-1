@@ -66,6 +66,7 @@ class UserUser(models.Model):
 
     class Meta:
         db_table = 'user_user'
+        unique_together = (('main_user_id', 'vice_user_id'),)
 
 
 class Lable(models.Model):
