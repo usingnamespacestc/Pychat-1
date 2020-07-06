@@ -1,6 +1,7 @@
 from django.shortcuts import render
-from django.contrib.auth.models import User
-from django.contrib import auth
+#from django.contrib.auth.models import User
+#from django.contrib import auth
+from user_info.models import User
 
 
 def home(request):
@@ -14,20 +15,20 @@ def home(request):
         except BaseException:
             user_name3 = request.POST['Username3']
             password3 = request.POST['Password3']
-            user = auth.authenticate(username=user_name3, password=password3)
+            user = User.authenticate(user_id=user_name3, pwd=password3)
             if user is None:
                 return render(request, 'index.html', {'错误': '用户名或密码错误'})
             else:
-                auth.login(request, user)
+                User.login(request, user)
                 return render(request, 'index.html')
         else:
             try:
-                User.objects.get(username=user_name)
+                User.objects.get(user_id=user_name)
                 return render(request, 'index.html', {'用户名错误': '该用户名已存在'})
             except User.DoesNotExist:
                 if password1 == password2:
-                    User.objects.create_user(
-                        username=user_name, password=password1)
+                    # user 表名，user_id、pwd 属性名
+                    User.objects.create(user_id=user_name, pwd=password1)
                     return render(request, 'index.html')
                 else:
                     return render(request, 'index.html', {'密码错误': '两次密码不同'})

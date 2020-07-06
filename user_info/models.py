@@ -68,3 +68,11 @@ class UserUser(models.Model):
     class Meta:
         db_table = 'user_user'
         unique_together = (('main_user_id', 'vice_user_id'),)
+
+
+class Test(models.Model):
+    test_id = models.CharField(primary_key=True, max_length=30)
+    port = models.IntegerField(blank=True, null=True, default=22)
+
+    class Meta:
+        db_table = 'test'
