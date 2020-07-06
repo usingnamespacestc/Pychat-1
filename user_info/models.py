@@ -62,12 +62,19 @@ class UserUser(models.Model):
     main_user_id = models.CharField(primary_key=True, max_length=30)
     vice_user_id = models.CharField(max_length=30)
     type = models.IntegerField()
-    grouping = models.CharField(max_length=30)
     remark = models.CharField(max_length=30, blank=True, null=True)
 
     class Meta:
         db_table = 'user_user'
-        unique_together = (('main_user_id', 'vice_user_id'),)
+
+
+class Lable(models.Model):
+    user_lable = models.CharField(max_length=30)
+    user_id = models.ForeignKey(
+        'UserUser', to_field='main_user_id', on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = 'lable'
 
 
 class Test(models.Model):
