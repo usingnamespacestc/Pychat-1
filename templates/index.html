@@ -1,62 +1,80 @@
 <!DOCTYPE html>
 <html>
 {%csrf_token%}
-{% load static %}
+{%load static%}
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <link rel="stylesheet" href="{% static 'index.css' %}" type="text/css" media="all">
+    <link rel="stylesheet" href="{% static 'index.css'%}" type="text/css" media="all">
+    <link rel="stylesheet" href="{% static 'dockStyle.css'%}">
     <!--引入Vue组件-->
-		<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <!-- 引入ElementUI样式 -->
     <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
     <!-- 引入ElementUI组件库 -->
     <script src="https://unpkg.com/element-ui/lib/index.js"></script>
     <!--
-		<script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
-		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css"/>
-		<script src="https://cdn.jsdelivr.net/gh/stevenjoezhang/live2d-widget/autoload.js"></script>
-		-->
+    <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css"/>
+    <script src="https://cdn.jsdelivr.net/gh/stevenjoezhang/live2d-widget/autoload.js"></script>
+    -->
+    <!-- 引入axios -->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <title>PyChat</title>
+    <link rel="icon" href="{% static 'icon.png' %}" type="image/x-icon" />
   </head>
-  <body>
+  <body onload="init()">
     <div id="container">  <!--Vue挂载点-->
       <transition name="mainAreaMove">
-        <div :class="mainArea" v-if="isPassed">
-          <!--
-          <div class="leftFixedBtn">
-            好友列表
-          </div>
-          <div class="friendList">
-          </div>
-          -->
+        <div class="mainArea" v-if="isPassed" @mousemove="mousemove">
+          <!--消息窗口-->
           <div class="talkArea">
             <div class="contentShowArea">
-              <embed src="test/test.html" width=100% height=100%>
+              <div class="titleArea">
+                QMS-226
+              </div>
+              <div class="messageShowArea">
+
+              </div>
             </div>
             <div class="contentInputArea">  
-              <textarea>🌶4️⃣📌💉🐂🍺​🌶4️⃣📌💉🐂🍺🌶4️⃣📌💉🐂🍺 ​</textarea>
+              <textarea v-model="inputContent">​</textarea>
             </div>
             <div class="btnArea">
-              <input type="button" value="发送" />
+              <input type="button" value="发 送" @click.prevent="sendMessage" />
             </div>
           </div>
+          <!-- 底边好友栏 -->
+          <div id="dockArea">
+            <template id="dock">
+              <ul>
+                <li v-for="(friend, index) in recentFriends" @click="selectFriendToTalk(index)">
+                  <span>{{ friend.name }}</span>
+                  <a href="#">
+                    <img :src="friend.avatar">
+                  </a>
+                </li>
+              </ul>
+            </template>
+          </div>
+
         </div>
       </transition>
+      <!--以下部分是登录区域-->
       <transition name="indexAreaMove">
         <div class="indexArea" v-if="!isPassed">
           <transition name="loginAreaMove">
             <div :class="switchClass" v-if="show">
-              <div class="logo">PYCHAT</div>
-              <form action="#" method="post">
-                <div class="inputArea">                
-                  <input type="text" name="Username3" placeholder="用户名" required="" />
-                  <input type="password" name="Password3" placeholder="密码" required="" />
-                
+              <div class="logo" @click="tempLogin">PYCHAT</div>
+              <div class="inputArea">
+                <form action="#" method="post">
+                  <input type="text" name="logUsername" placeholder="用户名" required="" v-model="logUsername" />
+                  <input type="password" name="logPassword" placeholder="密码" required="" v-model="logPassword" />
+                </form>
                 <div class="send-button">
-                  
-                    <input type="submit" value="登 录" @click.prevent="pass">
-                  
-                </div></form>
+                  <form>
+                    <input type="submit" value="登 录" @click.prevent="login">
+                  </form>
+                </div>
                 <div class="jumpArea">
                   <div class="switchToReg" @click="changeShow">
                     <div class="text">注册</div>
@@ -70,16 +88,17 @@
           <transition name="registerAreaMove">
             <div class="moveArea" v-if="!show">
               <div class="logo">PYCHAT</div>
-              <form action="#" method="post">
-                <div class="inputArea">                
-                  <input type="text" name="Username" placeholder="用户名" required="">
-                  <input type="password" name="Password1" placeholder="密码" required="">
-                  <input type="password" name="Password2" placeholder="确认密码" required="">
-                  <div class="send-button">
-                  
-                    <input type="submit" value="注 册">
-                 
-                </div> </form>
+              <div class="inputArea">
+                <form action="#" method="post">
+                  <input type="text" name="regUsername" placeholder="用户名" v-model="regUsername" />
+                  <input type="password" name="regPassword" v-model="firstPw" placeholder="密码" v-model="regPassword" />
+                  <input type="password" name="regPassword" v-model="secondPw" placeholder="确认密码" @blur="judgePWD"/>
+                </form>
+                <div class="send-button">
+                  <form>
+                    <input type="submit" value="注 册" @click.prevent="regSubmit" />
+                  </form>
+                </div>
                 <div class="jumpArea">
                   <div class="switchToReg" @click="changeShow">
                     <div class="text">登录</div>
@@ -89,41 +108,135 @@
               </div>
             </div>
           </transition>
-        </div>
+        </div>  
       </transition>
+      <!--设置按钮-->
       <div class="settingArea">
-        <img src="{% static 'setting.png' %}" class="settingBtn" @click="drawer = true" />
+        <img src="{% static 'setting.png' %}" class="settingBtn" @click="settingsDrawer = true" />
       </div>
+      <!--以下是设置界面-->
       <el-drawer
         title="设置页面"
-        :visible.sync="drawer"
-        :with-header="false">
-        <div class="settingDrawer">
-          <!--
-          <el-button type="primary" round @click="changeBk">
-            临时更换背景
-          </el-button>
-          -->
-          <div class="profile">
-            <div class="icon">
-              <el-avatar :size="60" src="https://empty" @error="errorHandler">
+        :visible.sync="settingsDrawer"
+        :with-header="false"
+        direction="rtl">
+        <div class="myScrollbar myScrollbarArea"> <!-- 滚动条 -->
+          <div class="profile"> 
+            <div class="settingAreaTitle">个人设置</div>
+            <div class="iconArea">
+              <el-avatar :size="160" src="https://empty" @error="errorHandler">
                 <img src="{% static '/icon/stc.jpg' %}"/>
               </el-avatar>
+              <p>用户名：谢唯是人是狗</p>
+            </div>
+            <div class="profileInputArea">
+              <p>
+                昵称：
+              </p>
+              <el-input
+                type="text"
+                placeholder="请输入昵称"
+                v-model="nickname"
+                maxlength="15"
+                show-word-limit
+              >
+              </el-input>
+              <br>
+              <p>
+                手机号码：
+              </p>
+              <el-input
+                type="text"
+                placeholder="请输入手机号码"
+                v-model="phonenumber"
+                maxlength="11"
+                show-word-limit
+              >
+              </el-input>
+              <p>
+                个人介绍：
+              </p>
+              <el-input
+                type="textarea"
+                placeholder="请输入内容"
+                v-model="discription"
+                maxlength="64"
+                show-word-limit
+              >
+              </el-input>
+              <el-popconfirm title="确定提交更改吗？">
+                <el-button slot="reference" type="primary" plain>
+                  提交更改
+                </el-button>
+              </el-popconfirm>
+              <el-link type="primary" @click="changePWD">
+                修改密码
+              </el-link>
+              <el-link type="danger" @click="">
+                退出登录
+              </el-link>
             </div>
           </div>
-          <div class="facade">
-
+          <div class="generalSettings">
+            <div class="settingAreaTitle">通用设置</div>
+            <div class="generalSettingsaInputArea">
+              <div class="facade">
+                <p>
+                  背景图片模式：
+                </p>
+                <el-select v-model="value" placeholder="请选择背景图片样式" @change="changeBK(value)">
+                  <el-option
+                    v-for="item in options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                    :disabled="item.disabled">
+                  </el-option>
+                </el-select>
+              </div>
+            </div>
           </div>
+        </div><!-- /滚动条 -->
+      </el-drawer>
+      <!--以下是好友界面-->
+      <el-drawer
+        title="设置页面"
+        :visible.sync="friendsDrawer"
+        :with-header="false"
+        direction="ltr"
+        :modal="false">
+        <!--好友列表-->
+        <div class="friendList">
+          <h3>好友列表</h3>
         </div>
-        <!--
-        <div class="settingDrawerBtn">更 换 背 景</div>
-        <div class="settingDrawerBtn" @click="chuo">猛戳谢唯皮燕</div>
-        <div class="tmpImgArea">
-          <img src="xw.jpg" :style="{height: 16 * h + 'px', width: 10 * h + 'px'}">
+        <!-- <el-input
+          placeholder="输入关键字进行过滤"
+          v-model="filterText">
+        </el-input>
+        <el-tree
+          class="filter-tree"
+          :data="friendListData"
+          :props="defaultProps"
+          :filter-node-method="filterNode"
+          ref="tree"
+          node-key="id"
+          @node-drag-start="handleDragStart"
+          @node-drag-enter="handleDragEnter"
+          @node-drag-leave="handleDragLeave"
+          @node-drag-over="handleDragOver"
+          @node-drag-end="handleDragEnd"
+          @node-drop="handleDrop"
+          draggable
+          :allow-drop="allowDrop"
+          :allow-drag="allowDrag"
+          :render-content="renderFriendList">
+        </el-tree> -->
+        <!--群列表-->
+        <div class="groupList">
+          <h3>群列表</h3>
         </div>
-        -->
       </el-drawer>
     </div>
   </body>
-  <script src="{% static 'index.js' %}"></script>
+  <script src="{% static 'index.js'%}"></script>
 </html>

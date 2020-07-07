@@ -1,0 +1,19 @@
+[0;1;31m●[0m nginx.service - A high performance web server and a reverse proxy server
+   Loaded: loaded (/lib/systemd/system/nginx.service; enabled; vendor preset: enabled)
+   Active: [0;1;31mfailed[0m (Result: exit-code) since Tue 2020-07-07 17:38:50 CST; 8s ago
+     Docs: man:nginx(8)
+  Process: 30773 ExecStop=/sbin/start-stop-daemon --quiet --stop --retry QUIT/5 --pidfile /run/nginx.pid [0;1;31m(code=exited, status=1/FAILURE)[0m
+  Process: 31682 ExecStart=/usr/sbin/nginx -g daemon on; master_process on; [0;1;31m(code=exited, status=1/FAILURE)[0m
+  Process: 31681 ExecStartPre=/usr/sbin/nginx -t -q -g daemon on; master_process on; (code=exited, status=0/SUCCESS)
+ Main PID: 30767 (code=exited, status=0/SUCCESS)
+
+Jul 07 17:38:47 iZ2ze1yrbvx80f27jymd2bZ systemd[1]: Starting A high performance web server and a reverse proxy server...
+Jul 07 17:38:47 iZ2ze1yrbvx80f27jymd2bZ nginx[31682]: nginx: [emerg] bind() to 0.0.0.0:8000 failed (98: Address already in use)
+Jul 07 17:38:48 iZ2ze1yrbvx80f27jymd2bZ nginx[31682]: nginx: [emerg] bind() to 0.0.0.0:8000 failed (98: Address already in use)
+Jul 07 17:38:48 iZ2ze1yrbvx80f27jymd2bZ nginx[31682]: nginx: [emerg] bind() to 0.0.0.0:8000 failed (98: Address already in use)
+Jul 07 17:38:49 iZ2ze1yrbvx80f27jymd2bZ nginx[31682]: nginx: [emerg] bind() to 0.0.0.0:8000 failed (98: Address already in use)
+Jul 07 17:38:49 iZ2ze1yrbvx80f27jymd2bZ nginx[31682]: nginx: [emerg] bind() to 0.0.0.0:8000 failed (98: Address already in use)
+Jul 07 17:38:50 iZ2ze1yrbvx80f27jymd2bZ nginx[31682]: nginx: [emerg] still could not bind()
+Jul 07 17:38:50 iZ2ze1yrbvx80f27jymd2bZ systemd[1]: [0;1;39m[0;1;31m[0;1;39mnginx.service: Control process exited, code=exited status=1[0m
+Jul 07 17:38:50 iZ2ze1yrbvx80f27jymd2bZ systemd[1]: [0;1;39m[0;1;31m[0;1;39mnginx.service: Failed with result 'exit-code'.[0m
+Jul 07 17:38:50 iZ2ze1yrbvx80f27jymd2bZ systemd[1]: [0;1;31m[0;1;39m[0;1;31mFailed to start A high performance web server and a reverse proxy server.[0m

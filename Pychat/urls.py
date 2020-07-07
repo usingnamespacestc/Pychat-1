@@ -15,9 +15,23 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf.urls import include
 from . import views
+from rest_framework_simplejwt import views as jwt_views
+from django.urls import re_path 
+# from django.conf import static
+from django.conf.urls.static import static
+
+from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.home),
-]
+    path('', views.home, name='home'),
+    path('login/', include('login.urls')),
+    path('chat/', include('chat.urls')),
+    path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
+    # re_path('^stiaic/(?P<path>.*)',serve,{'document_root':settings.STATIC_ROOT}), # 用于处理static里的文件
+    # re_path('^media/(?P<path>.*)',serve,{'document_root':settings.MEDIA_ROOT}), # 用于处理上传的文件
+    # path('chat/', include('chat.urls')),
+]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
