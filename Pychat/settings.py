@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'login',
     'userinfo',
     'chat',
+    'linkdb',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -58,7 +60,7 @@ MIDDLEWARE = [
 ]
 
 
-# AUTH_USER_MODEL = 'user.User'
+# AUTH_USER_MODEL = 'linkdb.User'
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
@@ -69,6 +71,16 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
      )
+}
+
+ASGI_APPLICATION = 'Pychat.routing.application'
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
 }
 
 
@@ -98,8 +110,12 @@ WSGI_APPLICATION = 'Pychat.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'HOST': '59.110.172.43',
+        'PORT': 3306,
+        'NAME': 'xw',
+        'USER': 'root',
+        'PASSWORD': '14bcb7c5c1c7491b',
     }
 }
 
@@ -146,7 +162,7 @@ STATIC_URL = '/static/'
 #     os.path.join(BASE_DIR, 'static'),
 # ]
 STATICFILES_DIRS = (
-    os.path.normpath(os.path.join(BASE_DIR, "static")),
+    os.path.normpath(os.path.join(BASE_DIR, "/static/")),
 )
 
 # STATICFILES_FINDERS = (

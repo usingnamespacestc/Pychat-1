@@ -37,6 +37,8 @@ function getCookie(cname){
   }
   return "";
 }
+const user_id = 'gck1'
+const chatSocket = new WebSocket('ws://' + window.location.host + '/ws/chat/' + user_id + '/');
 
 var app = new Vue({
   el: "#container",//id选择
