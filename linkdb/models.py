@@ -2,7 +2,7 @@ from django.db import models
 
 
 class GroupChat(models.Model):
-    group_id = models.CharField(primary_key=True, max_length=30)
+    group_id = models.AutoField(primary_key=True)
     group_master_id = models.CharField(max_length=30)
     last_message_id = models.CharField(max_length=30)
 
@@ -11,7 +11,7 @@ class GroupChat(models.Model):
 
 
 class GroupChatMessage(models.Model):
-    message_id = models.CharField(primary_key=True, max_length=30)
+    message_id = models.AutoField(primary_key=True)
     content = models.CharField(max_length=30)
     message_type = models.CharField(max_length=30)
     old_file_name = models.CharField(max_length=30, blank=True, null=True)
@@ -34,7 +34,7 @@ class GroupUser(models.Model):
 
 
 class PrivateChat(models.Model):
-    message_id = models.CharField(primary_key=True, max_length=30)
+    message_id = models.AutoField(primary_key=True)
     content = models.CharField(max_length=30)
     message_type = models.CharField(max_length=30)
     old_file_name = models.CharField(max_length=30, blank=True, null=True)
@@ -51,7 +51,7 @@ class User(models.Model):
     user_id = models.CharField(primary_key=True, max_length=30)
     nickname = models.CharField(max_length=30)
     pwd = models.CharField(max_length=50)
-    icone = models.TextField(blank=True, null=True)
+    icon = models.TextField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
 
     class Meta:
@@ -63,7 +63,7 @@ class UserUser(models.Model):
     vice_user_id = models.CharField(max_length=30)
     type = models.IntegerField()
     remark = models.CharField(max_length=30, blank=True, null=True)
-
+    tag = models.CharField(max_length=100, null=True)
     class Meta:
         db_table = 'user_user'
         unique_together = (('main_user_id', 'vice_user_id'),)

@@ -1,67 +1,71 @@
 <!DOCTYPE html>
 <html>
-{%csrf_token%}
-{%load static%}
+  {%csrf_token%}
+  {%load static%}
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="{% static 'index.css'%}" type="text/css" media="all">
     <link rel="stylesheet" href="{% static 'dockStyle.css'%}">
     <!--引入Vue组件-->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+		<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <!-- 引入ElementUI样式 -->
     <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
     <!-- 引入ElementUI组件库 -->
     <script src="https://unpkg.com/element-ui/lib/index.js"></script>
-    <!--
-    <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome/css/font-awesome.min.css"/>
-    <script src="https://cdn.jsdelivr.net/gh/stevenjoezhang/live2d-widget/autoload.js"></script>
-    -->
     <!-- 引入axios -->
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <title>PyChat</title>
     <link rel="icon" href="{% static 'icon.png' %}" type="image/x-icon" />
   </head>
   <body onload="init()">
-    <div id="container">  <!--Vue挂载点-->
+    <div id="container" @click="allVisible=true">  <!--Vue挂载点-->
       <transition name="mainAreaMove">
-        <div class="mainArea" v-if="isPassed" @mousemove="mousemove">
+        <div :class="mainArea" v-if="isPassed" @mousemove="mousemove">
           <!--消息窗口-->
-          <div class="talkArea">
+          <div class="talkArea" v-if="allVisible">
             <div class="contentShowArea">
-              <div class="titleArea">
-                QMS-226
+              <div class="titleArea" @dblclick="allVisible=false">
+                {% templatetag openvariable %} talkToWho {% templatetag closevariable %}
               </div>
               <div class="messageShowArea">
-
+                <div :class="{oneMessageMe:message.isMe, oneMessageOther:!message.isMe}" v-for="message in currentMessageList">
+                  <img class="talkIcon" v-if="message.isMe" :src="myIcon">
+                  <img class="talkIcon" v-if="!message.isMe" :src="otherIcon">
+                  <div class="talkContentArea">
+                    {% templatetag openvariable %} message.content {% templatetag closevariable %}
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="contentInputArea">  
+            <div class="contentInputArea" @keyup.enter.prevent="sendMessage">  
               <textarea v-model="inputContent">​</textarea>
             </div>
             <div class="btnArea">
+              <iframe id="iframe" align="middle" height="55%" width="40%" src="https://file.stc.ldby.site:12345/transfile.html">
+              </iframe>
               <input type="button" value="发 送" @click.prevent="sendMessage" />
             </div>
           </div>
           <!-- 底边好友栏 -->
-          <div id="dockArea">
+          <div id="dockArea" v-if="allVisible">
             <template id="dock">
               <ul>
                 <li v-for="(friend, index) in recentFriends" @click="selectFriendToTalk(index)">
-                  <span>{{ friend.name }}</span>
+                  <span> {% templatetag openvariable %} friend.label {% templatetag closevariable %}</span>
                   <a href="#">
-                    <img :src="friend.avatar">
+                    <el-badge :value="friend.counter" :hidden="friend.hasRead">
+                      <img :src="friend.icon">
+                    </el-badge>
                   </a>
                 </li>
               </ul>
             </template>
           </div>
-
         </div>
       </transition>
       <!--以下部分是登录区域-->
       <transition name="indexAreaMove">
-        <div class="indexArea" v-if="!isPassed">
+        <div class="indexArea" v-if="!isPassed" @keyup.enter="login">
           <transition name="loginAreaMove">
             <div :class="switchClass" v-if="show">
               <div class="logo" @click="tempLogin">PYCHAT</div>
@@ -111,7 +115,7 @@
         </div>  
       </transition>
       <!--设置按钮-->
-      <div class="settingArea">
+      <div class="settingArea" v-if="allVisible">
         <img src="{% static 'setting.png' %}" class="settingBtn" @click="settingsDrawer = true" />
       </div>
       <!--以下是设置界面-->
@@ -121,13 +125,13 @@
         :with-header="false"
         direction="rtl">
         <div class="myScrollbar myScrollbarArea"> <!-- 滚动条 -->
-          <div class="profile"> 
+          <div class="profile" v-if="isPassed"> 
             <div class="settingAreaTitle">个人设置</div>
             <div class="iconArea">
-              <el-avatar :size="160" src="https://empty" @error="errorHandler">
+              <el-avatar :size="160" :src="myIcon" @error="errorHandler">
                 <img src="{% static '/icon/stc.jpg' %}"/>
               </el-avatar>
-              <p>用户名：谢唯是人是狗</p>
+              <p>用户名：{% templatetag openvariable %}myUid{% templatetag closevariable %}</p>
             </div>
             <div class="profileInputArea">
               <p>
@@ -136,13 +140,12 @@
               <el-input
                 type="text"
                 placeholder="请输入昵称"
-                v-model="nickname"
+                v-model="myNickName"
                 maxlength="15"
-                show-word-limit
-              >
+                show-word-limit>
               </el-input>
               <br>
-              <p>
+              <!--<p>
                 手机号码：
               </p>
               <el-input
@@ -150,31 +153,31 @@
                 placeholder="请输入手机号码"
                 v-model="phonenumber"
                 maxlength="11"
-                show-word-limit
-              >
-              </el-input>
+                show-word-limit>
+              </el-input>-->
               <p>
                 个人介绍：
               </p>
               <el-input
                 type="textarea"
                 placeholder="请输入内容"
-                v-model="discription"
+                v-model="myDescription"
                 maxlength="64"
-                show-word-limit
-              >
+                show-word-limit>
               </el-input>
-              <el-popconfirm title="确定提交更改吗？">
-                <el-button slot="reference" type="primary" plain>
+              <div class="profitBtnArea">
+
+                <el-button slot="reference" type="primary" plain @click="changeProfile">
                   提交更改
                 </el-button>
-              </el-popconfirm>
-              <el-link type="primary" @click="changePWD">
-                修改密码
-              </el-link>
-              <el-link type="danger" @click="">
-                退出登录
-              </el-link>
+
+                <el-link type="primary" @click="changePWD">
+                  修改密码
+                </el-link>
+                <el-link type="danger" @click="exit">
+                  退出登录
+                </el-link>
+              </div>
             </div>
           </div>
           <div class="generalSettings">
@@ -184,7 +187,7 @@
                 <p>
                   背景图片模式：
                 </p>
-                <el-select v-model="value" placeholder="请选择背景图片样式" @change="changeBK(value)">
+                <el-select style="width:100%;" v-model="value" placeholder="请选择背景图片样式" @change="changeBK(value)">
                   <el-option
                     v-for="item in options"
                     :key="item.value"
@@ -205,37 +208,220 @@
         :with-header="false"
         direction="ltr"
         :modal="false">
-        <!--好友列表-->
-        <div class="friendList">
-          <h3>好友列表</h3>
+        <div class="friendDrawerArea">
+          <!--好友列表-->
+          <template id="friends">
+            <el-table 
+              width="100vh"
+              @row-click="listSwitchFocus"
+              :data="friendListData.filter(data => !searchFriendList || data.label.toLowerCase().includes(searchFriendList.toLowerCase()))">
+              <el-table-column
+                label="好友列表"
+                prop="icon"
+                width="80">
+                <template slot-scope="scope">            
+                  <img :src="scope.row.icon" align="center" width="45" height="45" style="border-radius: 15px;"/>
+                </template> 
+              </el-table-column>
+              <el-table-column
+                label=""
+                prop="label">
+              <template slot-scope="scope">            
+                <p>{% templatetag openvariable %} scope.row.label {% templatetag closevariable %}</p>
+              </template>
+              </el-table-column>
+              <el-table-column align="right">
+                <template slot="header" slot-scope="scope">
+                  <el-input
+                    v-model="searchFriendList"
+                    size="mini"
+                    placeholder="搜索"/>
+                </template>
+                <template slot-scope="scope">
+                  <el-button
+                    type="text"
+                    size="mini"
+                    @click="showFriendDetail(scope.row)">查看详情</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </template>
+          <!--群聊列表-->
+          <template id="groups">
+            <el-table 
+              @row-click="listSwitchFocus"
+              :data="groupListData.filter(data => !searchGroupList || data.label.toLowerCase().includes(searchGroupList.toLowerCase()))">
+              <el-table-column
+                label="群聊列表"
+                prop="icon"
+                width="80">
+                <template slot-scope="scope">            
+                  <img :src="scope.row.icon"  align="center" width="45" height="45" style="border-radius: 15px;"/>
+                </template> 
+              </el-table-column>
+              <el-table-column
+                label=""
+                prop="label">
+              <template slot-scope="scope">            
+                <p>{% templatetag openvariable %}scope.row.label{% templatetag closevariable %}</p>
+              </template>
+              </el-table-column>
+              <el-table-column align="right">
+                <template slot="header" slot-scope="scope">
+                  <el-input
+                    v-model="searchGroupList"
+                    size="mini"
+                    placeholder="搜索"/>
+                </template>
+                <template slot-scope="scope">
+                  <el-button
+                    type="text"
+                    size="mini"
+                    @click="editGroup(scope.row)">编辑群聊</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+          </template>
+          <!-- 其他功能区域 -->
+          <div class="friendDrawerBtnArea">
+            <el-button type="primary" plain @click="showAddFriend">添加好友</el-button>
+            <el-button type="primary" plain @click="createGroup">创建群聊</el-button>
+            <el-button type="danger" plain @click="showFriendManage">好友管理</el-button>
+          </div>
         </div>
-        <!-- <el-input
-          placeholder="输入关键字进行过滤"
-          v-model="filterText">
-        </el-input>
-        <el-tree
-          class="filter-tree"
-          :data="friendListData"
-          :props="defaultProps"
-          :filter-node-method="filterNode"
-          ref="tree"
-          node-key="id"
-          @node-drag-start="handleDragStart"
-          @node-drag-enter="handleDragEnter"
-          @node-drag-leave="handleDragLeave"
-          @node-drag-over="handleDragOver"
-          @node-drag-end="handleDragEnd"
-          @node-drop="handleDrop"
-          draggable
-          :allow-drop="allowDrop"
-          :allow-drag="allowDrag"
-          :render-content="renderFriendList">
-        </el-tree> -->
-        <!--群列表-->
-        <div class="groupList">
-          <h3>群列表</h3>
-        </div>
+
       </el-drawer>
+      <!-- 用户详情对话框 -->
+      <el-dialog
+        :visible.sync="friendDetailVisible"
+        width="50%"
+        :modal="false">
+        <div :class="{friendDetails: userInfo.isFriend, friendDetailsBlack: !userInfo.isFriend}">
+          <img :src="userInfo.icon" width="65" height="65" style="border-radius: 15px;"/>
+          <div class="detailsTextArea">
+            <span>用户名：{% templatetag openvariable %}userInfo.key{% templatetag closevariable %}</span>
+            <span>昵称：{% templatetag openvariable %}userInfo.label{% templatetag closevariable %}</span>
+            <span>介绍：{% templatetag openvariable %}userInfo.description{% templatetag closevariable %}</span>
+            <span v-show="userInfo.isFriend">关系：好友</span>
+            <span v-show="!userInfo.isFriend">关系：黑名单</span>
+          </div>
+          <!-- 下面这个div就是标签 -->
+          <div class="tagArea">
+            <el-tag
+              :key="tag"
+              v-for="tag in userInfo.tag"
+              closable
+              :disable-transitions="false"
+              @close="handleTagClose(tag)">
+              {% templatetag openvariable %}tag{% templatetag closevariable %}
+            </el-tag>
+            <el-input
+              class="input-new-tag"
+              v-if="inputTagVisible"
+              v-model="inputTagValue"
+              ref="saveTagInput"
+              size="small"
+              @keyup.enter.native="handleInputTagConfirm"
+              @blur="handleInputTagConfirm">
+            </el-input>
+            <el-button v-else class="button-new-tag" size="small" @click="showTagInput">+ 新标签</el-button>
+          </div>
+        </div>
+      </el-dialog>
+      <!-- 添加好友对话框 -->
+      <el-dialog
+        title="添加好友"
+        :visible.sync="addFriendVisible"
+        width="30%"
+        align="center"
+        :modal="false">
+        <template>
+          <el-autocomplete
+            v-model="state"
+            :fetch-suggestions="querySearchAsync"
+            placeholder="请输入内容"
+            @select="handleSelect">
+          </el-autocomplete>
+        </template>
+        <span slot="footer" class="dialog-footer">
+          <el-button type="primary" plain @click="addFriendVisible = false">
+            取消
+          </el-button>
+          <!-- <el-button type="primary" @click="sendInvitation">
+            添加
+          </el-button> -->
+        </span>
+      </el-dialog>
+      <!-- 编辑群聊对话框 -->
+      <el-dialog
+        title="编辑群聊"
+        :visible.sync="editGroupVisible"
+        width="80%"
+        align="center"
+        :modal="false">
+        <template>
+          <div style="text-align: center"><!-- groupmemberlist是右边的表，也就是群聊中的人 -->
+            <el-transfer
+              style="text-align: left; display: inline-block"
+              v-model="groupmemberlist" 
+              filterable
+              :titles="['好友列表', '群聊成员']"
+              :button-texts="['移出群聊', '添加至群聊']"
+              :format="{
+                noChecked: '${total}',
+                hasChecked: '${checked}/${total}'
+              }"
+              @change="handleChange"
+              :data="friendListData">
+              <span slot-scope="{ option }"><!-- 算了地方太小，不显示({{ option.key }})了 -->
+                <el-avatar :size="20" :src="option.icon" style="vertical-align:middle;"></el-avatar>
+                {% templatetag openvariable %} option.label {% templatetag closevariable %}
+              </span><!-- 在这里key是username，label是nickname，变量名不便于改 -->
+            </el-transfer>
+          </div>
+        </template>
+        <span slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="editGroupVisible = false">
+            关闭
+          </el-button>
+        </span>
+      </el-dialog>
+      <!-- 好友管理对话框 -->
+      <el-dialog
+        title="好友管理"
+        :visible.sync="friendManageVisible"
+        width="80%"
+        align="center"
+        :modal="false">
+        <!-- 穿梭框 -->
+        <template>
+          <div style="text-align: center"><!-- blacklist是右边的表，也就是黑名单 -->
+            <el-transfer
+              style="text-align: left; display: inline-block"
+              v-model="blacklist" 
+              filterable
+              :titles="['好友列表', '黑名单']"
+              :button-texts="['添加为好友', '移动到黑名单']"
+              :format="{
+                noChecked: '${total}',
+                hasChecked: '${checked}/${total}'
+              }"
+              @change="handleChange"
+              :data="friendListData">
+              <span slot-scope="{ option }"><!-- 算了地方太小，不显示({{ option.key }})了 -->
+                <el-avatar :size="20" :src="option.icon" style="vertical-align:middle;"></el-avatar>
+                {% templatetag openvariable %} option.label {% templatetag closevariable %}
+                <el-link class="transfer-footer" slot="reference" size="small" type="danger" @click="deleteFriend(option.key)">删除</el-link>
+              </span><!-- 在这里key是username，label是nickname，变量名不便于改 -->
+            </el-transfer>
+          </div>
+        </template>
+        <span slot="footer" class="dialog-footer">
+          <el-button type="primary" @click="friendManageVisible = false">
+            关闭
+          </el-button>
+        </span>
+      </el-dialog>
     </div>
   </body>
   <script src="{% static 'index.js'%}"></script>
