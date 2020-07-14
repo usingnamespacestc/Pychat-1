@@ -50,6 +50,40 @@ class ChatConsumer(WebsocketConsumer):
                     'msgId': msgid
                 }
             )
+        elif text_data_json['type'] == 'getMessage':
+            print("hahaha")
+            sid = text_data_json['sid']
+            rid = text_data_json['rid']
+            chats = PrivateChat.objects.raw("select * from private_chat where (send_user_id = '{}' and read_user_id = '{}') or (send_user_id = '{}' and read_user_id = '{}')".format(sid, rid, rid, sid))
+            clist = []
+            for chat in chats:
+                chat_dict = {k: getattr(chat, k) for k in ['content', 'message_type', 'old_file_name', 'send_user_id', 'read_user_id']}
+                if chat_dict['send_user_id'] == sid:
+                    chat_dict['isMe'] = True
+                else:
+                    chat_dict['isMe'] = False
+                clist.append(chat_dict)
+            async_to_sync(self.channel_layer.group_send)(
+                self.group_id, {
+                    'type':'get_info',
+                    'message':clist
+                }
+            )    
+        elif text_data_json['type'] == 'getMember':
+            gid = text_data_json['gid']
+            users = GroupUser.objects.raw("select * from group_user, user where group_user.group_id = %s and group_user.user_id = user.user_id" % gid)
+            ulist = []
+            for user in users:
+                user_dict = {k: getattr(user, k) for k in ['user_id', 'nickname', 'icon']}
+                ulist.append(user_dict)
+            print(ulist)
+            # message = json.dumps(ulist)
+            async_to_sync(self.channel_layer.group_send)(
+                self.group_id, {
+                    'type':'get_info',
+                    'message':ulist
+                }
+            )
         elif text_data_json['type'] == 'privateFile':
             message = text_data_json['message']
             filename = text_data_json['message']
@@ -74,10 +108,12 @@ class ChatConsumer(WebsocketConsumer):
                 user_dict = {k: getattr(p, k) for k in ['user_id', 'nickname']}
                 grouplist.append(user_dict)
             for i in users:
-                print(i)
-            async_to_sync(self.channel_layer.group_send)(
-                
-            )
+                async_to_sync(self.channel_layer.group_send)(
+                    i['user_id'],{
+                        'type':'status_message',
+                        'message':message
+                    }
+                )
         elif text_data_json['type'] == 'inviteFriend':
             tid = text_data_json['tId']
             message = "{}请求添加您为好友。".format(self.group_id)
@@ -175,6 +211,11 @@ class ChatConsumer(WebsocketConsumer):
         self.send(text_data=json.dumps({
             'message': message,
             'sId': sId
+        }))
+    def get_info(self, event):
+        message = event['message']
+        self.send(text_data=json.dumps({
+            'message': message
         }))
     def invatation_message(self, event):
         message = event['message']

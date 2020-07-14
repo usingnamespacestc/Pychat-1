@@ -50,8 +50,12 @@ iframe.onload = function() {
 
 // 接受domain2返回数据
 window.addEventListener('message', function(e) {
-  alert('data from domain2 ---> ' + e.data);
+  // console.log('data from domain2 ---> ' + e.data);
+  app.inputContent = e.info
+  console.log(e)
 }, false);
+
+
 
 // const user_id = 'gck1'
 var chatSocket;
@@ -224,7 +228,7 @@ var app = new Vue({
           h2('button', {
             on:{
               click:function(){
-                alert("你接受了该请求");
+                //alert("你接受了该请求");
                 console.log(sid)
                 chatSocket.send(JSON.stringify({'type':'addFriend', 'tId':sid}))
 
@@ -606,7 +610,7 @@ var app = new Vue({
     //以下是创建群聊的方法
       createGroup(){
         chatSocket.send(JSON.stringify({'type':'createGroup'}))
-        alert("你创建成功了吗？不好说")
+        //alert("你创建成功了吗？不好说")
       },
     //退出登录,还需要加上删除cookie
       exit() {
